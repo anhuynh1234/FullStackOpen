@@ -4,6 +4,15 @@ const Title = function({title}){
   return(<h1>{title}</h1>)
 }
 
+const StatisticsLine = function ({text, value}) {
+  return(
+    <tr>
+      <td>{text}:</td>
+      <td>{value}</td>
+    </tr>
+  )
+}
+
 const Statistics = ({stats, clicks}) => {
 
   if(clicks.good + clicks.bad + clicks.neutral === 0){
@@ -19,16 +28,25 @@ const Statistics = ({stats, clicks}) => {
   return(
     <>
       <Title title={stats} />
-      <p>Good: {clicks.good}</p>
-      <p>Netral: {clicks.neutral}</p>
-      <p>Bad: {clicks.bad}</p>
-      <p>All: {clicks.bad + clicks.good + clicks.neutral}</p>
-      <p>Average: {(clicks.bad*(-1) + clicks.good)/(clicks.bad + clicks.good + clicks.neutral)}</p>
-      <p>Positive: {(clicks.good)/(clicks.bad + clicks.good + clicks.neutral)}</p>
+      <table>
+        <tbody>
+        <StatisticsLine text="Good" value={clicks.good} />
+        <StatisticsLine text="Neutral" value={clicks.neutral} />
+        <StatisticsLine text="Bad" value={clicks.bad} />
+        <StatisticsLine text="All" value={clicks.bad + clicks.good + clicks.neutral} />
+        <StatisticsLine text="Average" value={(clicks.bad*(-1) + clicks.good)/(clicks.bad + clicks.good + clicks.neutral)} />
+        <StatisticsLine text="Positive" value={(clicks.good)/(clicks.bad + clicks.good + clicks.neutral)} />
+        </tbody>
+      </table>
     </>
   )
 }
 
+function Button ({handleClick, text}) {
+  return(
+    <button onClick={handleClick}>{text}</button>
+  )
+}
 
 function App() {
   const title = "Feedback"
@@ -64,9 +82,9 @@ function App() {
   return(
     <>
       <Title title={title} />
-      <button onClick={handleGood}>{"Good"}</button>
-      <button onClick={handleNeutral}>{"Neutral"}</button>
-      <button onClick={handleBad}>{"Bad"}</button>
+      <Button handleClick={handleGood} text="Good" />
+      <Button handleClick={handleNeutral} text="Neutral" />
+      <Button handleClick={handleBad} text="Bad" />
       <Statistics stats={stats} clicks={clicks} />
     </>
   )
