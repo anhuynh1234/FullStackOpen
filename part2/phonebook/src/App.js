@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
+import services from './services/note'
 
 const Filter = function ({filter, handleFilterChange}) {
   return(
@@ -20,20 +20,26 @@ const Form = ({newName, newNumber, handleSubmitName, handleChangeInput, handleCh
           Number: <input value={newNumber} onChange={handleChangeInputNumber} />
         </div>
         <div>
-          <button type="submit">add</button>
+          <button type="submit">Add</button>
         </div>
       </form>
     </>
   )
 }
 
-const Numbers = function ({persons, filter}) {
+const Numbers = function ({persons, filter, handleDeleteContact}) {
   return(
     <div>
-      {persons.map(person => {
-        if((person.name.toLowerCase()).includes(filter.toLowerCase())){
-          return (<p key={person.id}>{person.name}: {person.number}</p>)
-        }
+      {(persons.filter(person => (person.name.toLowerCase()).includes(filter.toLowerCase()))).map(individual => {
+        return(
+          <form key={individual.id}>
+            <div key={individual.id}>
+              {individual.name}: {individual.number} 
+              <span>    </span>
+              <button type="submit" onClick={handleDeleteContact} value={[individual.id, individual.name]}>Delete</button>
+            </div>
+          </form>
+        )
       })}
     </div>
   )
@@ -43,11 +49,10 @@ const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(promise => {
-      setPersons(promise.data)
-    })
+    services.getPersons()
+            .then(newPersons => {
+              setPersons(newPersons)
+            })
   }, [])
 
   const [newName, setNewName] = useState('')
@@ -60,9 +65,21 @@ const App = () => {
     persons.map(person => newName === person.name ? repeated = true : (repeated ? repeated = true : repeated = false))
 
     if(repeated){
-      window.alert(`${newName} is in the phonebook already!`)
+      if(window.confirm(`${newName} is in the phonebook already. Do you want to replace the number?`)){
+        services.modifyNumber(newNumber, persons, newName)
+                .then(response => {
+                  setPersons(persons.map(person => (person.name === newName ? response.data : person)))
+                })
+      }
     }else if(newName !== ""){
-      setPersons(persons.concat({name: newName, number: newNumber, id: persons.length+1}))
+      const person = {
+        name: newName,
+        number: newNumber,
+      }
+      services.createPersons(person)
+              .then(newPerson => {
+                setPersons(persons.concat(newPerson))
+              })
     }
     setNewName('')
     setNumber('')
@@ -80,6 +97,16 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const handleDeleteContact = (event) => {
+    const parameters = event.target.value.split(',')
+    event.preventDefault()
+    if(window.confirm(`Do you want to delete ${parameters[1]}?`)){
+      services.deletePerson(Number(parameters[0]))
+      setPersons(persons.filter(person => {if(person.id !== Number(parameters[0]))
+                                        return (person)}))
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -87,9 +114,9 @@ const App = () => {
         <Filter filter={filter} handleFilterChange={handleFilterChange} />
       </div>
       <h2>Add a new</h2>
-      <Form newName={newName} newNumbe={newNumber} handleSubmitName={handleSubmitName} handleChangeInput={handleChangeInput} handleChangeInputNumber={handleChangeInputNumber} />
+      <Form newName={newName} newNumber={newNumber} handleSubmitName={handleSubmitName} handleChangeInput={handleChangeInput} handleChangeInputNumber={handleChangeInputNumber} />
       <h2>Numbers</h2>
-      <Numbers persons={persons} filter={filter} />
+      <Numbers persons={persons} filter={filter} handleDeleteContact={handleDeleteContact}/>
     </div>
   )
 }
