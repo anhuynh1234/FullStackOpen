@@ -27,10 +27,10 @@ const Form = ({newName, newNumber, handleSubmitName, handleChangeInput, handleCh
   )
 }
 
-const Numbers = function ({persons, filter, handleDeleteContact}) {
+const Numbers = function ({persons, filterName, handleDeleteContact}) {
   return(
     <div>
-      {(persons.filter(person => (person.name.toLowerCase()).includes(filter.toLowerCase()))).map(individual => {
+      {(persons.filter(person => (person.name.toLowerCase()).includes(filterName.toLowerCase()))).map(individual => {
         return(
           <form key={individual.id}>
             <div key={individual.id}>
@@ -45,19 +45,51 @@ const Numbers = function ({persons, filter, handleDeleteContact}) {
   )
 }
 
-const App = () => {
-  const [persons, setPersons] = useState([])
+const Message = ({message, messageStyleSuccess, messageStyleFailure}) => {
+  let messageStyle = {}
 
+  if(message[0] == 0){
+    messageStyle = messageStyleSuccess
+  }else{
+    messageStyle = messageStyleFailure
+  }
+
+  if(message[1] !== ''){
+    return(
+      <div style={messageStyle}>
+        <p>{message[1]}</p>
+      </div>
+    )
+  }
+}
+
+const App = () => {
+  
   useEffect(() => {
     services.getPersons()
-            .then(newPersons => {
-              setPersons(newPersons)
-            })
+    .then(newPersons => {
+      setPersons(newPersons)
+    })
   }, [])
-
+  
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNumber] = useState('')
-  const [filter, setFilter] = useState('')
+  const [filterName, setFilter] = useState('')
+  const [message, setMessage] = useState([0, ''])
+
+
+  const messageStyleSuccess = {
+    color: "green",
+    padding: "10px",
+    backgroundColor: "grey" 
+  }
+
+  const messageStyleFailure = {
+    color: "red",
+    padding: "10px",
+    backgroundColor: "grey" 
+  }
 
   const handleSubmitName = (event) => {
     event.preventDefault()
@@ -80,6 +112,10 @@ const App = () => {
               .then(newPerson => {
                 setPersons(persons.concat(newPerson))
               })
+      setMessage([0, `${newName} has been successfully added to contact list.`])
+      setTimeout(() =>{
+        setMessage([0, ''])}, 4000
+      )
     }
     setNewName('')
     setNumber('')
@@ -102,21 +138,28 @@ const App = () => {
     event.preventDefault()
     if(window.confirm(`Do you want to delete ${parameters[1]}?`)){
       services.deletePerson(Number(parameters[0]))
+              .catch(error => {
+                setMessage([1, `${parameters[1]} has already been removed from the list.`])
+                setTimeout(() =>{
+                  setMessage([0, ''])}, 4000
+                )
+              })
       setPersons(persons.filter(person => {if(person.id !== Number(parameters[0]))
                                         return (person)}))
     }
   }
 
   return (
-    <div>
-      <h2>Phonebook</h2>
+    <div className='mainDiv'>
+      <h2 className="mainHeader">Phonebook</h2>
+      <Message message={message} messageStyleSuccess={messageStyleSuccess} messageStyleFailure={messageStyleFailure} />
       <div>
-        <Filter filter={filter} handleFilterChange={handleFilterChange} />
+        <Filter filter={filterName} handleFilterChange={handleFilterChange} />
       </div>
       <h2>Add a new</h2>
       <Form newName={newName} newNumber={newNumber} handleSubmitName={handleSubmitName} handleChangeInput={handleChangeInput} handleChangeInputNumber={handleChangeInputNumber} />
       <h2>Numbers</h2>
-      <Numbers persons={persons} filter={filter} handleDeleteContact={handleDeleteContact}/>
+      <Numbers persons={persons} filterName={filterName} handleDeleteContact={handleDeleteContact}/>
     </div>
   )
 }
