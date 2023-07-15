@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     countriesServices.getCountries()
                      .then(response => {
-                            setCountries(response)
+                            setCountries(response.map(country => country.name))
                           })
   },[])
 
@@ -21,8 +21,12 @@ function App() {
     return null
   }
 
+  console.log(countries)
+
   if(findCountry != ''){
-    
+    setCountriesList(countries.map(country => {
+      
+    }))
   }
 
   return (
