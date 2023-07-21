@@ -137,14 +137,15 @@ const App = () => {
     const parameters = event.target.value.split(',')
     event.preventDefault()
     if(window.confirm(`Do you want to delete ${parameters[1]}?`)){
-      services.deletePerson(Number(parameters[0]))
+      services.deletePerson((parameters[0]))
+      // services.deletePerson(Number(parameters[0]))  ** For older verion with number id
               .catch(error => {
                 setMessage([1, `${parameters[1]} has already been removed from the list.`])
                 setTimeout(() =>{
                   setMessage([0, ''])}, 4000
                 )
               })
-      setPersons(persons.filter(person => {if(person.id !== Number(parameters[0]))
+      setPersons(persons.filter(person => {if(person.id !== (parameters[0]))
                                         return (person)}))
     }
   }

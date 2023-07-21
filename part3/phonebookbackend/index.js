@@ -8,10 +8,9 @@ const Person = require('./models/person')
 const app = express()
 
 // Declaring middlewares
-
+app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
-app.use(express.static('build'))
 
 // let persons = 
 // [
@@ -47,9 +46,12 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-    response.send(
-        `<div>Phonebook has info for ${persons.length} ${persons.length > 1 ? "people" : "person"} <br /> ${Date()}</div>`
-    )
+
+    Person.find({}).then(persons => {
+        response.send(
+            `<div>Phonebook has info for ${persons.length} ${persons.length > 1 ? "people" : "person"} <br /> ${Date()}</div>`
+        )
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -69,10 +71,33 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
 
-    response.status(204).end()
+    Person.findByIdAndRemove(request.params.id)
+            .then(result => {
+                response.status(204).end()
+            })
+            .catch(error => next(error))
+
+    // older part 
+    // const id = Number(request.params.id)
+    // persons = persons.filter(person => person.id !== id)
+
+    // response.status(204).end()
+})
+
+app.put('/api/persons/:id', (request, response) => {
+    const body = request.body
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, {new: true})
+            .then(updatedPerson => {
+                response.json(updatedPerson)
+            })
+            .catch(error => next(error))
 })
 
 morgan.token('requestBody', (request, response) => {
@@ -139,6 +164,23 @@ app.post('/api/persons', (request, response) => {
     //     response.json(persons)
     // }
 })
+
+const unknownEndpoint = function(request, response){
+    response.status(404).send({error: "Unknown endpoint"})
+}
+
+app.use(unknownEndpoint)
+
+// Middleware for handling operational errors
+const handleError = (error, request, response) => {
+    console.log(error.message)
+    if(error.name === "CasrError"){
+        return response.status(400).send({error: "Malinformed ID"})
+    }
+    next(error)
+}
+
+app.use(handleError)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
