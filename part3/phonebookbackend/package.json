@@ -6,13 +6,16 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "Echo \"No test available\" && echo 1"
+    "test": "Echo \"No test available\" && echo 1",
+    "mongo": "node mongo.js password_here"
   },
   "author": "An Huynh",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "mongoose": "^7.4.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

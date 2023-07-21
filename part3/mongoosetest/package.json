@@ -1,0 +1,19 @@
+{
+  "name": "mongoosetest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "Echo \"No test required\" && exit 1 ",
+    "start": "node index.js thaianhuynh2532003",
+    "dev": "nodemon index.js 23LjkE7IANrrqASS"
+  },
+  "author": "AN Huynh",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "mongoose": "^7.4.0"
+  }
+}
