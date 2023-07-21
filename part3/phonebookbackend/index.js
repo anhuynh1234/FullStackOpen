@@ -1,3 +1,4 @@
+// Imports all modules
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
@@ -5,6 +6,8 @@ const morgan = require('morgan')
 const Person = require('./models/person')
 
 const app = express()
+
+// Declaring middlewares
 
 app.use(cors())
 app.use(express.json())
