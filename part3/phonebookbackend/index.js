@@ -7,6 +7,7 @@ const Person = require('./models/person')
 
 const app = express()
 
+console.log(Number('sadas').toString() === 'sadas')
 // Declaring middlewares
 app.use(express.static('build'))
 app.use(cors())
@@ -85,7 +86,7 @@ app.delete('/api/persons/:id', (request, response) => {
     // response.status(204).end()
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
 
     const person = {
@@ -93,7 +94,7 @@ app.put('/api/persons/:id', (request, response) => {
         number: body.number
     }
 
-    Person.findByIdAndUpdate(request.params.id, person, {new: true})
+    Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query'})
             .then(updatedPerson => {
                 response.json(updatedPerson)
             })
@@ -112,7 +113,7 @@ app.use(morgan((tokens, req, res) => {
 
 // app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if(body.name === undefined){
@@ -124,9 +125,11 @@ app.post('/api/persons', (request, response) => {
         number: body.number
     })
 
-    newPerson.save().then(savedPerson => {
-        response.json(savedPerson)
-    })
+    newPerson.save()
+        .then(savedPerson => {
+            response.json(savedPerson)
+        })
+        .catch(error => next(error))
 
     // older part
     // const id = Math.floor(Math.random()*1000000000000)
@@ -172,10 +175,12 @@ const unknownEndpoint = function(request, response){
 app.use(unknownEndpoint)
 
 // Middleware for handling operational errors
-const handleError = (error, request, response) => {
-    console.log(error.message)
+const handleError = (error, request, response, next) => {
+    console.log("error.message")
     if(error.name === "CasrError"){
         return response.status(400).send({error: "Malinformed ID"})
+    }else if(error.name === "ValidationError"){
+        return response.status(400).json({ error: error.message })
     }
     next(error)
 }

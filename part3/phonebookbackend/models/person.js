@@ -15,8 +15,24 @@ mongoose.connect(url)
         })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+        type: String,
+        minLength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minLength: 8,
+        required: true,
+        validate: (query) => {
+            const queryComponents = query.split('-')
+            console.log(queryComponents)
+            if(queryComponents.length != 2){
+                return false
+            }
+            return (queryComponents[0].length == 2 || queryComponents[0].length == 3) && Number(queryComponents[0]).toString() === queryComponents[0] && Number(queryComponents[1]).toString() === queryComponents[1]
+        }
+    }
 })
 
 personSchema.set('toJSON', {

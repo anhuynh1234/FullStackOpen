@@ -102,6 +102,12 @@ const App = () => {
                 .then(response => {
                   setPersons(persons.map(person => (person.name === newName ? response.data : person)))
                 })
+                .catch(error => {
+                  setMessage([1, `${newNumber} is in invalid format. Please input a number in proper form.`])
+                  setTimeout(() =>{
+                    setMessage([0, ''])}, 4000
+                  )
+                })
       }
     }else if(newName !== ""){
       const person = {
@@ -111,11 +117,27 @@ const App = () => {
       services.createPersons(person)
               .then(newPerson => {
                 setPersons(persons.concat(newPerson))
+                setMessage([0, `${newName} has been successfully added to contact list.`])
+                setTimeout(() =>{
+                  setMessage([0, ''])}, 4000
+                )
               })
-      setMessage([0, `${newName} has been successfully added to contact list.`])
-      setTimeout(() =>{
-        setMessage([0, ''])}, 4000
-      )
+              .catch(error => {
+                console.log(error.response.data.error)
+
+                if(newName.length < 3){
+                  setMessage([1, `${newName} is invalid. Please input a longer name.`])
+                  setTimeout(() =>{
+                    setMessage([0, ''])}, 4000
+                  )
+                } else {
+                  setMessage([1, `${newNumber} is invalid. Please input a number in valid form.`])
+                  setTimeout(() =>{
+                    setMessage([0, ''])}, 4000
+                  )
+                }
+              })
+      
     }
     setNewName('')
     setNumber('')
