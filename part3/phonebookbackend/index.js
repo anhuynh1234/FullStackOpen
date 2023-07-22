@@ -13,26 +13,26 @@ app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 
-// let persons = 
+// let persons =
 // [
-//     { 
+//     {
 //       "id": 1,
-//       "name": "Arto Hellas", 
+//       "name": "Arto Hellas",
 //       "number": "040-123456"
 //     },
-//     { 
+//     {
 //       "id": 2,
-//       "name": "Ada Lovelace", 
+//       "name": "Ada Lovelace",
 //       "number": "39-44-5323523"
 //     },
-//     { 
+//     {
 //       "id": 3,
-//       "name": "Dan Abramov", 
+//       "name": "Dan Abramov",
 //       "number": "12-43-234345"
 //     },
-//     { 
+//     {
 //       "id": 4,
-//       "name": "Mary Poppendieck", 
+//       "name": "Mary Poppendieck",
 //       "number": "39-23-6423122"
 //     }
 // ]
@@ -50,7 +50,7 @@ app.get('/info', (request, response) => {
 
     Person.find({}).then(persons => {
         response.send(
-            `<div>Phonebook has info for ${persons.length} ${persons.length > 1 ? "people" : "person"} <br /> ${Date()}</div>`
+            `<div>Phonebook has info for ${persons.length} ${ persons.length > 1 ? 'people' : 'person' } <br /> ${Date()}</div>`
         )
     })
 })
@@ -71,15 +71,15 @@ app.get('/api/persons/:id', (request, response) => {
     // }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
 
     Person.findByIdAndRemove(request.params.id)
-            .then(result => {
-                response.status(204).end()
-            })
-            .catch(error => next(error))
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 
-    // older part 
+    // older part
     // const id = Number(request.params.id)
     // persons = persons.filter(person => person.id !== id)
 
@@ -94,11 +94,11 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number
     }
 
-    Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query'})
-            .then(updatedPerson => {
-                response.json(updatedPerson)
-            })
-            .catch(error => next(error))
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
 })
 
 morgan.token('requestBody', (request, response) => {
@@ -117,9 +117,9 @@ app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if(body.name === undefined){
-        return response.status(400).json({error: "Content missing"})
+        return response.status(400).json({ error: 'Content missing' })
     }
-    
+
     const newPerson = new Person({
         name: body.name,
         number: body.number
@@ -169,17 +169,16 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 const unknownEndpoint = function(request, response){
-    response.status(404).send({error: "Unknown endpoint"})
+    response.status(404).send({ error: 'Unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 // Middleware for handling operational errors
 const handleError = (error, request, response, next) => {
-    console.log("error.message")
-    if(error.name === "CasrError"){
-        return response.status(400).send({error: "Malinformed ID"})
-    }else if(error.name === "ValidationError"){
+    if(error.name === 'CasrError'){
+        return response.status(400).send({ error: 'Malinformed ID' })
+    }else if(error.name === 'ValidationError'){
         return response.status(400).json({ error: error.message })
     }
     next(error)
@@ -187,7 +186,7 @@ const handleError = (error, request, response, next) => {
 
 app.use(handleError)
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${ PORT }`)
 })
