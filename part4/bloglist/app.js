@@ -1,4 +1,4 @@
-const {PORT, MONGO_URI} = require('./utils/config')
+const config = require('./utils/config')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blog')
 
-const mongoUrl = MONGO_URI
+const mongoUrl = config.MONGO_URI
 mongoose.connect(mongoUrl)
         .then(result => {
             console.log('Connected to MongoDB')
