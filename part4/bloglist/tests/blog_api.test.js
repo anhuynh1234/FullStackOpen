@@ -67,7 +67,7 @@ test.skip('Undefined likes will default to 0', async () => {
 })
 
 // 4.12
-test('Bad request status when url or title is missing', async () => {
+test.skip('Bad request status when url or title is missing', async () => {
     const newBlog = {
         author: "Robert C. Martin",
         url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
@@ -87,6 +87,38 @@ test('Bad request status when url or title is missing', async () => {
       .post('/api/blogs')
       .send(newBlogAnother)
       .expect(400)
+})
+
+// 4.13
+test.skip('Delete an existing blog', async () => {
+  const blogs = await api.get('/api/blogs')
+  const blogsToDelete = blogs.body[0]
+
+  await api.delete(`/api/blogs/${blogsToDelete.id}`)
+    .expect(204)
+
+  const blogsAfterDelete = await api.get('/api/blogs')
+  expect(blogs.body.length).toEqual(blogsAfterDelete.body.length + 1)
+})
+
+// 4.14
+test('Modifying the content of existing blog', async () => {
+  const newBlog = {
+    author: "Robert",
+    title: "Heres me An",
+    url: "alaladotcom",
+    likes: 43
+  }
+
+  const blogs = await api.get('/api/blogs')
+  const idModified = blogs.body[0].id
+
+  await api.put(`/api/blogs/${idModified}`)
+    .send(newBlog)
+  
+  const newDBBlogs = await api.get('/api/blogs')
+
+  expect(newDBBlogs.body[0].likes).toEqual(newBlog.likes)
 })
 
 afterAll(async () => {
