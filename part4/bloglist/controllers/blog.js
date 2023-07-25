@@ -17,6 +17,10 @@ blogRouter.get('/', async (request, response) => {
 blogRouter.post('/', async (request, response) => {
     let blog = new Blog(request.body)
 
+    if(!blog.url || !blog.title){
+        return response.status(400).end()
+    }
+
     if(!blog.likes){
         blog.likes = 0
     }

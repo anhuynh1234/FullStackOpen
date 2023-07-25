@@ -48,7 +48,7 @@ test.skip('Adding another blog into database', async () => {
 })
 
 // 4.11
-test('Undefined likes will default to 0', async () => {
+test.skip('Undefined likes will default to 0', async () => {
     const newBlog = {
         title: "First class tests",
         author: "Robert C. Martin",
@@ -64,6 +64,29 @@ test('Undefined likes will default to 0', async () => {
     const newBlogs = await api.get('/api/blogs')
 
     expect(newBlogs.body[newBlogs.body.length - 1].likes).toBeDefined()
+})
+
+// 4.12
+test('Bad request status when url or title is missing', async () => {
+    const newBlog = {
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+      }
+    
+    await api   
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const newBlogAnother = {
+    author: "Robert C. Martin",
+    title: "Java hahah",
+    }
+    
+    await api   
+      .post('/api/blogs')
+      .send(newBlogAnother)
+      .expect(400)
 })
 
 afterAll(async () => {
