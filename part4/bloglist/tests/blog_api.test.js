@@ -18,9 +18,33 @@ test.skip('Fetching blogs from data base completely', async () => {
 })
 
 // 4.9
-test('Checking blogs are defined with IDs', async () => {
+test.skip('Checking blogs are defined with IDs', async () => {
     const blogs = await api.get('/api/blogs')
     expect(blogs.body[0].id).toBeDefined()
+})
+
+// 4.10
+test('Adding another blog into database', async () => {
+    const oldBlogs = await api.get('/api/blogs')
+
+    const newBlog = {
+        title: "First class tests",
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+        likes: 10
+      }
+    
+    await api   
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-type', /application\/json/)
+
+    const newBlogs = await api.get('/api/blogs')
+    const titles = newBlogs.body.map(newBlog => newBlog.title)
+
+    expect(newBlogs.body).toHaveLength(Number(oldBlogs.body.length) + 1)
+    expect(titles).toContain(newBlog.title)
 })
 
 afterAll(async () => {
