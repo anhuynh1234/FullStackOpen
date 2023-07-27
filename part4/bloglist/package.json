@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env Node_ENV=test jest tests/blog_api.test.js --verbose --runInBand",
+    "test": "cross-env NODE_ENV=test jest tests/users.test.js --verbose --runInBand",
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js"
   },
@@ -17,14 +17,17 @@
     "supertest": "^6.3.3"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
-    "mongoose": "^7.4.0"
+    "mongoose": "^7.4.0",
+    "mongoose-unique-validator": "^4.0.0"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globalTeardown": "./tests/teardown.js"
   }
 }

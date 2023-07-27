@@ -12,8 +12,9 @@ test.skip('Sending HTTP GET request returns database content', async () => {
         .expect('Content-type', /application\/json/)
 })
 
-test.skip('Fetching blogs from data base completely', async () => {
+test('Fetching blogs from data base completely', async () => {
     const blogs = await api.get('/api/blogs')
+    console.log(blogs)
     expect(blogs.body).toHaveLength(3)
 })
 
@@ -102,7 +103,7 @@ test.skip('Delete an existing blog', async () => {
 })
 
 // 4.14
-test('Modifying the content of existing blog', async () => {
+test.skip('Modifying the content of existing blog', async () => {
   const newBlog = {
     author: "Robert",
     title: "Heres me An",
