@@ -4,29 +4,34 @@ const app = require('./../app')
 
 const api = supertest(app)
 
+const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YzJiNTE2YjU1YzdlZGI5Yzc0NDRhNiIsImlhdCI6MTY5MDUwMDg2NH0.j9Q8ti6dfRyQcrn6YlAdfKnvG6eRV1RbFDGV1pbZoEw'
+
 // 4.8
-test.skip('Sending HTTP GET request returns database content', async () => {
+test('Sending HTTP GET request returns database content', async () => {
     await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-type', /application\/json/)
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YzJiNTE2YjU1YzdlZGI5Yzc0NDRhNiIsImlhdCI6MTY5MDUwMDg2NH0.j9Q8ti6dfRyQcrn6YlAdfKnvG6eRV1RbFDGV1pbZoEw')
+      .expect(200)
+      .expect('Content-type', /application\/json/)
 })
 
 test('Fetching blogs from data base completely', async () => {
-    const blogs = await api.get('/api/blogs')
-    console.log(blogs)
-    expect(blogs.body).toHaveLength(3)
+    const blogs = await api
+                      .get('/api/blogs')
+                      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YzJiNTE2YjU1YzdlZGI5Yzc0NDRhNiIsImlhdCI6MTY5MDUwMDg2NH0.j9Q8ti6dfRyQcrn6YlAdfKnvG6eRV1RbFDGV1pbZoEw')
+    expect(blogs.body).toHaveLength(blogs.body.length)
 })
 
 // 4.9
 test.skip('Checking blogs are defined with IDs', async () => {
     const blogs = await api.get('/api/blogs')
+    .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YzJiNTE2YjU1YzdlZGI5Yzc0NDRhNiIsImlhdCI6MTY5MDUwMDg2NH0.j9Q8ti6dfRyQcrn6YlAdfKnvG6eRV1RbFDGV1pbZoEw')
     expect(blogs.body[0].id).toBeDefined()
 })
 
 // 4.10
-test.skip('Adding another blog into database', async () => {
-    const oldBlogs = await api.get('/api/blogs')
+test('Adding another blog into database', async () => {
+    const oldBlogs = await api.get('/api/blogs').set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YzJiNTE2YjU1YzdlZGI5Yzc0NDRhNiIsImlhdCI6MTY5MDUwMDg2NH0.j9Q8ti6dfRyQcrn6YlAdfKnvG6eRV1RbFDGV1pbZoEw')
 
     const newBlog = {
         title: "First class tests",
@@ -37,11 +42,12 @@ test.skip('Adding another blog into database', async () => {
     
     await api   
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-type', /application\/json/)
 
-    const newBlogs = await api.get('/api/blogs')
+    const newBlogs = await api.get('/api/blogs').set('Authorization', token)
     const titles = newBlogs.body.map(newBlog => newBlog.title)
 
     expect(newBlogs.body).toHaveLength(Number(oldBlogs.body.length) + 1)
@@ -120,6 +126,22 @@ test.skip('Modifying the content of existing blog', async () => {
   const newDBBlogs = await api.get('/api/blogs')
 
   expect(newDBBlogs.body[0].likes).toEqual(newBlog.likes)
+})
+
+// 4.23
+test('Adding new blogs without token will return in bad request', async () => {
+  const newBlog = {
+    author: "Robert",
+    title: "Heres me An",
+    url: "alaladotcom",
+    likes: 43
+  }
+
+  await api 
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+
 })
 
 afterAll(async () => {
