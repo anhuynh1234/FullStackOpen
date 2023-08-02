@@ -11,6 +11,14 @@ const Error = ({errorMessage}) => {
   )
 }
 
+const Success = ({successMessage}) => {
+  return (
+    <div id='success'>
+      {successMessage}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -20,6 +28,8 @@ const App = () => {
   const [url, setUrl] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [submitBlog, setSubmitBlog] = useState(false)
 
   useEffect(() => {
     const getBlogs = async () => {
@@ -29,7 +39,7 @@ const App = () => {
       }
     }  
     getBlogs()
-  }, [user])
+  }, [user, submitBlog])
   // console.log(blogs)
 
   useEffect(() => {
@@ -69,6 +79,31 @@ const App = () => {
     blogService.setToken(null)
   }
 
+  const handleCreate = async (event) => {
+    event.preventDefault()
+    try {
+      await blogService.create({
+        title: title, 
+        author: author,
+        url: url
+      })
+      setSuccessMessage(`${title} by ${author} has been successfully added`)
+      setTimeout(() => {
+        setSuccessMessage(``)
+      }, 5000)
+      setAuthor('')
+      setUrl('')
+      setTitle('')
+      const newSubmitBlog = ! submitBlog
+      setSubmitBlog(newSubmitBlog)
+    } catch (error) {
+      setErrorMessage(error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   if(user === null){
     return (
       <div>
@@ -89,17 +124,10 @@ const App = () => {
     )
   }
 
-  const handleCreate = async (event) => {
-    event.preventDefault()
-    blogService.create({
-      title: title, 
-      author: author,
-      url: url
-    })
-  }
-
   return (
    <div>
+      <Error errorMessage={errorMessage} />
+      <Success successMessage={successMessage} />
       <form onSubmit={handleLogout}>
         Logged in as {user.name}
         <button type='submit'>Log out</button>
