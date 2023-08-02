@@ -4,7 +4,11 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const Error = ({errorMessage}) => {
-
+  return (
+    <div id='error'>
+      {errorMessage}
+    </div>
+  )
 }
 
 const App = () => {
@@ -15,12 +19,17 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    const getBlogs = async () => {
+      if(user !== null){
+        const allBlogs = await blogService.getAll(user)
+          setBlogs( allBlogs )
+      }
+    }  
+    getBlogs()
+  }, [user])
+  console.log(blogs)
 
-  const handleLogin =async (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
@@ -30,7 +39,7 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setErrorMessage('Wrong credentials')
-      setTimeOut(() => {
+      setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
@@ -39,8 +48,8 @@ const App = () => {
   if(user === null){
     return (
       <div>
+        <Error errorMessage={errorMessage} />
         <h2>Blogs</h2>
-
         <form onSubmit={handleLogin}>
           <div>
             Username  
@@ -58,6 +67,11 @@ const App = () => {
 
   return (
    <div>
+      <form>
+        Logged in as {user.name}
+        <button type='submit'>Log out</button>
+      </form>
+      <p></p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
