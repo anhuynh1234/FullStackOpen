@@ -1,7 +1,7 @@
 import Toggable from './Togglable'
 
-const Blog = ({blog, user, incrementLikes, deleteBlog}) => (
-  <div style={{border: 'solid', padding: '5px'}}>
+const Blog = ({ blog, user, incrementLikes, deleteBlog }) => (
+  <div style={{ border: 'solid', padding: '5px' }}>
     {blog.title} {blog.author}
     <Toggable buttonLabel='View'>
       <div>{blog.url}</div>
@@ -14,7 +14,7 @@ const Blog = ({blog, user, incrementLikes, deleteBlog}) => (
         <button onClick={deleteBlog} >Delete</button>
       </div>
     </Toggable>
-  </div>  
+  </div>
 )
 
 export default Blog

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import CreateForm from './components/CreateForm'
 import Toggable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-const Error = ({errorMessage}) => {
+const Error = ({ errorMessage }) => {
   return (
     <div id='error'>
       {errorMessage}
@@ -13,7 +13,7 @@ const Error = ({errorMessage}) => {
   )
 }
 
-const Success = ({successMessage}) => {
+const Success = ({ successMessage }) => {
   return (
     <div id='success'>
       {successMessage}
@@ -36,8 +36,9 @@ const App = () => {
   const [submitBlog, setSubmitBlog] = useState(false)
   const [blog, setBlog] = useState(null)
   const [deleteBlog, setDeleteBlog] = useState(null)
+  const blogFormRef = useRef()
 
-  // useEffect hooks 
+  // useEffect hooks
   useEffect(() => {
     const getBlogs = async () => {
       if(user !== null){
@@ -45,7 +46,7 @@ const App = () => {
         allBlogs.sort((a, b) => {return (a.likes - b.likes)})
         setBlogs( allBlogs )
       }
-    }  
+    }
     getBlogs()
   }, [user, submitBlog])
   // console.log(blogs)
@@ -62,8 +63,8 @@ const App = () => {
   useEffect(() => {
     const updateBLog = async () => {
       if (blog !== null) {
-        const newBlog = {likes: blog.likes + 1}
-        
+        const newBlog = { likes: blog.likes + 1 }
+
         await blogService.update(blog.id, newBlog)
         setBlog(null)
         setSubmitBlog(!submitBlog)
@@ -90,11 +91,11 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({username, password,})
+      const user = await loginService.login({ username, password, })
 
       window.localStorage.setItem(
         'loggedBlogUser', JSON.stringify(user)
-        )
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -118,19 +119,20 @@ const App = () => {
   // Controls what hapens when new blogs are added
   const handleCreate = async (event) => {
     event.preventDefault()
+    blogFormRef.current.toggle()
     if(title === '' || author === ''){
       return
     }
 
     try {
       await blogService.create({
-        title: title, 
+        title: title,
         author: author,
         url: url === '' ? ' ' : url
       })
       setSuccessMessage(`${title} by ${author} has been successfully added`)
       setTimeout(() => {
-        setSuccessMessage(``)
+        setSuccessMessage('')
       }, 5000)
       setAuthor('')
       setUrl('')
@@ -153,12 +155,12 @@ const App = () => {
         <h2>Blogs</h2>
         <form onSubmit={handleLogin}>
           <div>
-            Username  
-              <input type="text" value={username} name="Username" onChange={target => {setUsername(target.target.value)}} />
-          </div> 
+            Username
+            <input type="text" value={username} name="Username" onChange={target => {setUsername(target.target.value)}} />
+          </div>
           <div>
-            Password    
-              <input type='password' value={password} name="Password" onChange={target => {setPassword(target.target.value)}} />
+            Password
+            <input type='password' value={password} name="Password" onChange={target => {setPassword(target.target.value)}} />
           </div>
           <button type='submit'>Log in</button>
         </form>
@@ -167,7 +169,7 @@ const App = () => {
   }
 
   return (
-   <div>
+    <div>
       <Error errorMessage={errorMessage} />
       <Success successMessage={successMessage} />
       <form onSubmit={handleLogout}>
@@ -175,14 +177,14 @@ const App = () => {
         <button type='submit'>Log out</button>
       </form>
       <p></p>
-      <Toggable buttonLabel='Create'>
-        <CreateForm 
-          title={title} 
-          author={author} 
-          url={url} 
-          setTitle={target => {setTitle(target.target.value)}} 
-          setAuthor={target => {setAuthor(target.target.value)}} 
-          setUrl={target => {setUrl(target.target.value)}} 
+      <Toggable buttonLabel='Create' ref={blogFormRef} >
+        <CreateForm
+          title={title}
+          author={author}
+          url={url}
+          setTitle={target => {setTitle(target.target.value)}}
+          setAuthor={target => {setAuthor(target.target.value)}}
+          setUrl={target => {setUrl(target.target.value)}}
           handleCreate={handleCreate}
         />
       </Toggable>
