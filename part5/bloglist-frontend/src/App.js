@@ -34,13 +34,16 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
   const [submitBlog, setSubmitBlog] = useState(false)
+  const [blog, setBlog] = useState(null)
+  const [deleteBlog, setDeleteBlog] = useState(null)
 
   // useEffect hooks 
   useEffect(() => {
     const getBlogs = async () => {
       if(user !== null){
         const allBlogs = await blogService.getAll(user)
-          setBlogs( allBlogs )
+        allBlogs.sort((a, b) => {return (a.likes - b.likes)})
+        setBlogs( allBlogs )
       }
     }  
     getBlogs()
@@ -55,6 +58,32 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  useEffect(() => {
+    const updateBLog = async () => {
+      if (blog !== null) {
+        const newBlog = {likes: blog.likes + 1}
+        
+        await blogService.update(blog.id, newBlog)
+        setBlog(null)
+        setSubmitBlog(!submitBlog)
+      }
+    }
+    updateBLog()
+  }, [blog])
+
+  useEffect(() => {
+    const deleteBlogs = async () => {
+      if (deleteBlog !== null) {
+        if (window.confirm(`Remove ${deleteBlog.title} by ${deleteBlog.author}?`)){
+          await blogService.deleteBlog(deleteBlog.id)
+        }
+        setSubmitBlog(!submitBlog)
+        setDeleteBlog(null)
+      }
+    }
+    deleteBlogs()
+  }, [deleteBlog])
 
   // Handling login page
   const handleLogin = async (event) => {
@@ -159,7 +188,7 @@ const App = () => {
       </Toggable>
       <p></p>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} />
+        <Blog key={blog.id} blog={blog} user={user} incrementLikes={() => setBlog(blog)} deleteBlog={() => setDeleteBlog(blog)} />
       )}
     </div>
   )
