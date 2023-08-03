@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import CreateForm from './components/CreateForm'
+import Toggable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -20,6 +22,8 @@ const Success = ({successMessage}) => {
 }
 
 const App = () => {
+
+  // Setting initial states for all variables
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -31,6 +35,7 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [submitBlog, setSubmitBlog] = useState(false)
 
+  // useEffect hooks 
   useEffect(() => {
     const getBlogs = async () => {
       if(user !== null){
@@ -51,6 +56,7 @@ const App = () => {
     }
   }, [])
 
+  // Handling login page
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -72,6 +78,7 @@ const App = () => {
     }
   }
 
+  // Controls what happens when user logs out
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogUser')
@@ -79,13 +86,18 @@ const App = () => {
     blogService.setToken(null)
   }
 
+  // Controls what hapens when new blogs are added
   const handleCreate = async (event) => {
     event.preventDefault()
+    if(title === '' || author === ''){
+      return
+    }
+
     try {
       await blogService.create({
         title: title, 
         author: author,
-        url: url
+        url: url === '' ? ' ' : url
       })
       setSuccessMessage(`${title} by ${author} has been successfully added`)
       setTimeout(() => {
@@ -104,6 +116,7 @@ const App = () => {
     }
   }
 
+  // Returns log in page when there is no user info
   if(user === null){
     return (
       <div>
@@ -133,24 +146,20 @@ const App = () => {
         <button type='submit'>Log out</button>
       </form>
       <p></p>
-      <form onSubmit={handleCreate}>
-        <div>
-          Title:
-            <input type='text' value={title} name='Title' onChange={target => {setTitle(target.target.value)}} />
-        </div>
-        <div>
-          Author:
-            <input type='text' value={author} name='Author' onChange={target=> {setAuthor(target.target.value)}} />
-        </div>
-        <div>
-          Url:
-            <input type='text' value={url} name='Url' onChange={target => {setUrl(target.target.value)}} />
-        </div>
-        <button type='submit'>Create</button>
-      </form>
+      <Toggable buttonLabel='Create'>
+        <CreateForm 
+          title={title} 
+          author={author} 
+          url={url} 
+          setTitle={target => {setTitle(target.target.value)}} 
+          setAuthor={target => {setAuthor(target.target.value)}} 
+          setUrl={target => {setUrl(target.target.value)}} 
+          handleCreate={handleCreate}
+        />
+      </Toggable>
       <p></p>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} user={user} />
       )}
     </div>
   )
