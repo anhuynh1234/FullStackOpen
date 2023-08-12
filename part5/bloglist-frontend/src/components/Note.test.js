@@ -3,6 +3,8 @@ import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import createForm from './CreateForm'
+import CreateForm from './CreateForm'
 
 test.skip('renders content', () => {
   const blog = {
@@ -80,4 +82,16 @@ test.skip('Clicking Like twice registers event two times', async () => {
   expect(mockHandler.mock.calls).toHaveLength(1)
 })
 
-test()
+test('<CreateForm /> component updates on onSubmit', async () => {
+  const blog = {
+    title: 'fred',
+    author: 'andy',
+    likes: 42,
+    url: 'feed'
+  }
+  
+  const createNote = jest.fn()
+  const user = userEvent.setup()
+
+  render(<CreateForm title={blog.title} author={blog.author} url={blog.url} />)
+})
