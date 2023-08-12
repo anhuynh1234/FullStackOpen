@@ -1,8 +1,9 @@
 import Toggable from './Togglable'
 
 const Blog = ({ blog, user, incrementLikes, deleteBlog }) => (
-  <div style={{ border: 'solid', padding: '5px' }}>
-    {blog.title} {blog.author}
+  <div style={{ border: 'solid', padding: '5px' }} className='blog'>
+    <span>{blog.title} </span>
+    <span>{blog.author}</span>
     <Toggable buttonLabel='View'>
       <div>{blog.url}</div>
       <div>
