@@ -3,7 +3,6 @@ import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
-import createForm from './CreateForm'
 import CreateForm from './CreateForm'
 
 test.skip('renders content', () => {
@@ -90,8 +89,27 @@ test('<CreateForm /> component updates on onSubmit', async () => {
     url: 'feed'
   }
   
-  const createNote = jest.fn()
+  const createBlog = jest.fn()
+  const setTitle = jest.fn()
+  const setAuthor = jest.fn()
+  const setUrl = jest.fn()
   const user = userEvent.setup()
 
-  render(<CreateForm title={blog.title} author={blog.author} url={blog.url} />)
+  render(<CreateForm
+    title={blog.title}
+    author={blog.author}
+    url={blog.url}
+    setTitle={setTitle}
+    setAuthor={setAuthor}
+    setUrl={setUrl}
+    handleCreate={createBlog}
+  />)
+
+  const submitButton = screen.getByText('Create')
+
+  await user.click(submitButton)
+
+  expect(createBlog.mock.calls).toHaveLength(1)
+  console.log(createBlog.mock.calls[0][0].title)
+  // screen.debug()
 })

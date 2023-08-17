@@ -6,17 +6,17 @@ const CreateForm = ({ title, author, url, setTitle, setAuthor, setUrl, handleCre
     <form onSubmit={handleCreate}>
       <div>
         Title:
-        <input type='text' value={title} name='Title' onChange={setTitle} />
+        <input className='title' type='text' value={title} name='Title' onChange={setTitle} />
       </div>
       <div>
         Author:
-        <input type='text' value={author} name='Author' onChange={setAuthor} />
+        <input className='author' type='text' value={author} name='Author' onChange={setAuthor} />
       </div>
       <div>
         Url:
-        <input type='text' value={url} name='Url' onChange={setUrl} />
+        <input className='url' type='text' value={url} name='Url' onChange={setUrl} />
       </div>
-      <button type='submit'>Create</button>
+      <button className='create' type='submit'>Create</button>
     </form>
   )
 }

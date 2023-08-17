@@ -41,7 +41,7 @@ const App = () => {
   // useEffect hooks
   useEffect(() => {
     const getBlogs = async () => {
-      if(user !== null){
+      if(user !== null) {
         const allBlogs = await blogService.getAll(user)
         allBlogs.sort((a, b) => {return (a.likes - b.likes)})
         setBlogs( allBlogs )
@@ -156,13 +156,13 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             Username
-            <input type="text" value={username} name="Username" onChange={target => {setUsername(target.target.value)}} />
+            <input id="username" type="text" value={username} name="Username" onChange={target => {setUsername(target.target.value)}} />
           </div>
           <div>
             Password
-            <input type='password' value={password} name="Password" onChange={target => {setPassword(target.target.value)}} />
+            <input id='password' type='password' value={password} name="Password" onChange={target => {setPassword(target.target.value)}} />
           </div>
-          <button type='submit'>Log in</button>
+          <button id='login-button' type='submit'>Log in</button>
         </form>
       </div>
     )
@@ -174,7 +174,7 @@ const App = () => {
       <Success successMessage={successMessage} />
       <form onSubmit={handleLogout}>
         Logged in as {user.name}
-        <button type='submit'>Log out</button>
+        <button id='logout-button' type='submit'>Log out</button>
       </form>
       <p></p>
       <Toggable buttonLabel='Create' ref={blogFormRef} >
