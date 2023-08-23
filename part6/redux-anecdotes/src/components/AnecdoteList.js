@@ -1,20 +1,23 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { newVote } from './../reducers/anecdoteReducer'
-import { createNoti, deleteNoti } from './../reducers/notiReducer'
+import { newVoteAnecdote } from './../reducers/anecdoteReducer'
+import { setNoti } from './../reducers/notiReducer'
 
 const AnecdoteList = () => {
   const filter = useSelector(state => state.filter).toLowerCase()
-  const anecdotes = useSelector(state => state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter)))
+  const anecdotes = useSelector(state => state.anecdotes)
   const dispatch = useDispatch()
+
+  // .filter(anecdote => anecdote.content.toLowerCase().includes(filter))
 
   const vote = (id) => {
     // console.log('vote', id)
-    dispatch(newVote(id))
-    dispatch(createNoti(`You added a vote to ${(anecdotes.find(anecdote => anecdote.id == id).content)}`))
+    // dispatch(newVote(id))
+    dispatch(newVoteAnecdote(id))
+    dispatch(setNoti(`You added a vote to ${(anecdotes.find(anecdote => anecdote.id == id).content)}`, 3000))
     
-    setTimeout(() => {
-      dispatch(deleteNoti())
-    }, 3000)
+    // setTimeout(() => {
+    //   dispatch(deleteNoti())
+    // }, 3000)
   }
 
   return (

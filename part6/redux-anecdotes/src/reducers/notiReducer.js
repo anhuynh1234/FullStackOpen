@@ -17,4 +17,13 @@ const notiSlice = createSlice({
 
 export const { createNoti, deleteNoti } = notiSlice.actions
 
+export const setNoti = (content, time) => {
+    return dispatch => {
+        dispatch(createNoti(content))
+        setTimeout(() => {
+            dispatch(deleteNoti())
+          }, time)
+    }
+}
+
 export default notiSlice.reducer
