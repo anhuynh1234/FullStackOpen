@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import App from './App'
 import anecdoteReducer from './reducers/anecdoteReducer'
 import filterReducer from './reducers/filterReducer'
+import notiReducer from './reducers/notiReducer'
 
 // const reducer= combineReducers({
 //   anecdotes: anecdoteReducer,
@@ -15,8 +16,11 @@ import filterReducer from './reducers/filterReducer'
 // const store = createStore(reducer)
 
 const store = configureStore({
-  anecdotes: anecdoteReducer,
-  filter: filterReducer
+  reducer: {
+    anecdotes: anecdoteReducer,
+    filter: filterReducer,
+    noti: notiReducer
+  }
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
