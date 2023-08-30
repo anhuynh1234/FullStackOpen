@@ -1,7 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createAnecdote } from "../requests"
+// import { useContext } from "react"
+// import NotiContext from "../NotiContext"
+import { useNotiDispatch } from "../NotiContext"
 
 const AnecdoteForm = () => {
+
+  const notiDispatch = useNotiDispatch()
 
   const queryClient = useQueryClient()
 
@@ -9,8 +14,27 @@ const AnecdoteForm = () => {
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: (newAnecdote) => {
       // queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
-      const anecdotes = queryClient.getQueryData(['anecdotes'])
-      queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      if(!newAnecdote) {
+        notiDispatch({
+          type: 'ERROR'
+        })
+      }else{
+        const anecdotes = queryClient.getQueryData(['anecdotes'])
+        queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+
+        notiDispatch({
+          type: 'ADD_SUCCESS',
+          payload: {
+            content: newAnecdote.content
+          }
+        })
+      }   
+      
+      setTimeout(() => {
+        notiDispatch({
+          type: 'EMPTY'
+        })
+      }, 3000)   
     }
   })
 
