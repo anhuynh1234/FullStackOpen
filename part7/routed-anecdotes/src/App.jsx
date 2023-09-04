@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   useMatch, Routes, Link, Route, useParams, useNavigate
 } from 'react-router-dom'
+import { useField } from './hooks/index'
 
 const Menu = () => {
   const padding = {
@@ -53,23 +54,26 @@ const Footer = () => (
 const CreateNew = (props) => {
   const navigate = useNavigate()
 
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  // const [content, setContent] = useState('')
+  // const [author, setAuthor] = useState('')
+  // const [info, setInfo] = useState('')
+
+  const content = useField('text')
+  const info = useField('text')
+  const author = useField('text')
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('fsfasd')
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
     navigate('/')
 
-    props.addNoti(`New anecdote ${content} added`)
+    props.addNoti(`New anecdote ${content.value} added`)
     setTimeout(() => {
       props.addNoti('')
     }, 3000)
@@ -81,17 +85,23 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           Content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          {/* <input name='content' value={content} onChange={(e) => setContent(e.target.value)} /> */}
+          <input name="content" {...content}/>
         </div>
         <div>
           Author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input name='author' {...author} />
         </div>
         <div>
           Url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input name='info' {...info} />
         </div>
         <button type="submit">Create</button>
+        <button type="reset" onClick={() => {
+          content.onClick()
+          author.onClick()
+          info.onClick()
+        }}>Reset</button>
       </form>
     </div>
   )
