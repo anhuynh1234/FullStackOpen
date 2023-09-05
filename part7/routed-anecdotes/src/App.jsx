@@ -108,13 +108,13 @@ const CreateNew = (props) => {
 }
 
 const Anecdote = ({ anecdote }) => {
-
+  console.log(anecdote.info)
   return(
     <div>
       <h2>{anecdote.content} by {anecdote.author}</h2>
       <span>
         Has {anecdote.votes} likes<br />
-        For more info, check <a href={anecdote.info}>{anecdote.info}</a>
+        For more info, check <a href={`//${anecdote.info}`}>{anecdote.info}</a>
       </span>
     </div>
   )
