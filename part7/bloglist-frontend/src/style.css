@@ -1,0 +1,14 @@
+
+#error, #success {
+    background-color: rgb(198, 191, 191);
+}
+
+#error {
+    color: red;
+    font-size: 20px
+}
+
+#success {
+    font-size: 20px;
+    color: green
+}
