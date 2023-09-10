@@ -92,7 +92,6 @@ const Blogs = ({ blogs, user, submitBlog, setSubmitBlog }) => {
             <p></p>
 
             {blogs.map((blog) => (
-                
                 <Blog
                 key={blog.id}
                 blog={blog}
@@ -100,7 +99,6 @@ const Blogs = ({ blogs, user, submitBlog, setSubmitBlog }) => {
                 incrementLikes={() => dispatch(addLike(blog))}
                 deleteBlog={() => dispatch(deleteBlog(blog))}
                 />
-
             ))}
         </div>
     )

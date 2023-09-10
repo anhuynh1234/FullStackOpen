@@ -179,7 +179,7 @@ const App = () => {
 
       <Routes>
         <Route path="/blogs" element={user ? <Blogs blogs={blogs} user={user} submitBlog={submitBlog} setSubmitBlog={setSubmitBlog}/> : loginLink}/>
-        <Route path="/blogs/:id" element={user ? <BlogView blog={chosenBlog} /> : loginLink}/>
+        <Route path="/blogs/:id" element={user ? <BlogView blog={chosenBlog} submitBlog={submitBlog} setSubmitBlog={setSubmitBlog} /> : loginLink}/>
         <Route path="/users" element={user ? <Users users={users} /> : loginLink}/>
         <Route path="/users/:id" element={user ? <User user={chosenUser} /> : loginLink}/>
         <Route path="/" element={user ? <Blogs blogs={blogs} user={user} /> : loginLink} />
