@@ -1,8 +1,12 @@
 
-const Noti = (props) => {
+const Noti = ({noti}) => {
+    if(!noti) {
+        return null;
+    }
+    
     return (
-        <div id={props.result}>
-            {props.message}
+        <div id={noti[0]}>
+            {noti[1]}
         </div>
     )
 }
