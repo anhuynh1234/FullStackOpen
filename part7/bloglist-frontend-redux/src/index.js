@@ -8,6 +8,7 @@ import blogReducer from './reducers/blogReducer'
 import userReducer from "./reducers/userReducer"
 import operationReducer from "./reducers/operationReducer"
 import usersReducer from './reducers/usersReducer'
+import blogSubmitReducer from "./reducers/blogSubmitReducer"
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from "react-redux"
 
@@ -17,7 +18,8 @@ const store = configureStore({
         blogs: blogReducer,
         user: userReducer,
         blog: operationReducer,
-        users: usersReducer
+        users: usersReducer,
+        blogSubmit: blogSubmitReducer
     }
 })
 

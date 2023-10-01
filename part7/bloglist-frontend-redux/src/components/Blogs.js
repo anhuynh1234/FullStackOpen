@@ -6,6 +6,7 @@ import CreateForm from "./CreateForm";
 import { setNoti } from "../reducers/notiReducer";
 import { useState, useEffect, useRef } from "react"
 import blogService from './../services/blogs'
+import { toggleBlogSubmit } from "../reducers/blogSubmitReducer";
 
 const Blogs = ({ blogs, user, submitBlog, setSubmitBlog }) => {
     const dispatch = useDispatch()
@@ -48,8 +49,7 @@ const Blogs = ({ blogs, user, submitBlog, setSubmitBlog }) => {
           setUrl("");
           setTitle("")
     
-          const newSubmitBlog = !submitBlog;
-          setSubmitBlog(newSubmitBlog);
+          dispatch(toggleBlogSubmit())
         } catch (error) {
           // setErrorMessage(error);
           // setTimeout(() => {

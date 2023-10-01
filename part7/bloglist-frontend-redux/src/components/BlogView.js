@@ -3,8 +3,9 @@ import { useDispatch } from "react-redux"
 import Togglable from "./Togglable"
 import { useState, useRef } from "react"
 import blogService from './../services/blogs'
+import { toggleBlogSubmit } from "../reducers/blogSubmitReducer"
 
-const BlogView = ({ blog, submitBlog, setSubmitBlog }) => {
+const BlogView = ({ blog }) => {
     const dispatch = useDispatch()
     const [comment, setComment] = useState('')
     const commentRef = useRef()
@@ -19,7 +20,7 @@ const BlogView = ({ blog, submitBlog, setSubmitBlog }) => {
         commentRef.current.toggle()
         const newBlog = {comments: blog.comments.concat(comment)}
         await blogService.addComment(blog.id, newBlog)  
-        setSubmitBlog(!submitBlog)
+        dispatch(toggleBlogSubmit())
         setComment('')
     }
 

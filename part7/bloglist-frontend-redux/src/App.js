@@ -35,6 +35,7 @@ const App = () => {
   const user = useSelector(state => state.user)
   const blog = useSelector(state => state.blog)
   const users = useSelector(state => state.users)
+  const blogSubmit = useSelector(state => state.blogSubmit)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -75,7 +76,7 @@ const App = () => {
     if(!user) {
       setLoginLink(<Navigate replace to="/login" />)
     }
-  }, [user, submitBlog])
+  }, [user, submitBlog, blogSubmit])
   // console.log(blogs)
 
   useEffect(() => {
@@ -178,8 +179,8 @@ const App = () => {
       <p></p>
 
       <Routes>
-        <Route path="/blogs" element={user ? <Blogs blogs={blogs} user={user} submitBlog={submitBlog} setSubmitBlog={setSubmitBlog}/> : loginLink}/>
-        <Route path="/blogs/:id" element={user ? <BlogView blog={chosenBlog} submitBlog={submitBlog} setSubmitBlog={setSubmitBlog} /> : loginLink}/>
+        <Route path="/blogs" element={user ? <Blogs blogs={blogs} user={user} /> : loginLink}/>
+        <Route path="/blogs/:id" element={user ? <BlogView blog={chosenBlog} /> : loginLink}/>
         <Route path="/users" element={user ? <Users users={users} /> : loginLink}/>
         <Route path="/users/:id" element={user ? <User user={chosenUser} /> : loginLink}/>
         <Route path="/" element={user ? <Blogs blogs={blogs} user={user} /> : loginLink} />

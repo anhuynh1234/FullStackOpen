@@ -1,5 +1,4 @@
 
-
 const User = (user) => {
 
     if(!user.user) {
